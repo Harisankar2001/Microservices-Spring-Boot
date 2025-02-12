@@ -1,18 +1,30 @@
 package com.example.notificationservice.consumer;
 
-import com.example.notificationservice.service.NotificationService;
+import com.example.notificationservice.model.Notifications;
+import com.example.notificationservice.repository.NotificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+import java.util.ArrayList;
+import java.util.List;
+
+
+@Component
 public class NotificationConsumer {
 
     @Autowired
-    private NotificationService notificationService;
+    private NotificationRepository notificationRepository;
 
     @KafkaListener(topics = "task-notifications", groupId = "notification-group")
-    public void listTaskNotifications(String message){
-        notificationService.sendNotification(message);
+    public List<Notifications> listTaskNotifications(String message){
+
+        Notifications notifications = new Notifications();
+        notifications.setMessages(message);
+        List<Notifications> notifications1 = new ArrayList<>();
+        notifications1.add(notifications);
+        notificationRepository.save(notifications);
+
+        return notifications1;
     }
 }
